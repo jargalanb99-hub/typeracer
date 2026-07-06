@@ -1,17 +1,30 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Global safety net: default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
     match /typeracer_scores/{scoreId} {
       allow read: if true;
-      allow create: if request.resource.data.name is string 
-                    && request.resource.data.name.size() > 0 
-                    && request.resource.data.name.size() <= 25
-                    && request.resource.data.wpm is number
-                    && request.resource.data.wpm >= 0
-                    && request.resource.data.wpm < 300
-                    && request.resource.data.accuracy is number
-                    && request.resource.data.accuracy >= 0
-                    && request.resource.data.accuracy <= 100;
+      allow create: if isValidScore(request.resource.data);
     }
   }
+}
+
+function isValidScore(data) {
+  return data.keys().hasAll(['name', 'wpm', 'accuracy', 'racer', 'timestamp'])
+    && data.keys().size() == 5
+    && data.name is string
+    && data.name.size() > 0
+    && data.name.size() <= 25
+    && data.wpm is number
+    && data.wpm >= 0
+    && data.wpm <= 300
+    && data.accuracy is number
+    && data.accuracy >= 0
+    && data.accuracy <= 100
+    && data.racer is string
+    && data.racer.size() <= 25;
 }

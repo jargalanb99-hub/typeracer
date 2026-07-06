@@ -1,0 +1,38 @@
+{
+  "entities": {
+    "Score": {
+      "title": "Score",
+      "description": "Represents a high score in the typeracer game.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the racer"
+        },
+        "wpm": {
+          "type": "number",
+          "description": "Words per minute speed"
+        },
+        "accuracy": {
+          "type": "number",
+          "description": "Typing accuracy percentage"
+        },
+        "racer": {
+          "type": "string",
+          "description": "The racer type or vehicle used"
+        },
+        "timestamp": {
+          "type": "object",
+          "description": "Timestamp when the score was recorded"
+        }
+      },
+      "required": ["name", "wpm", "accuracy", "racer"]
+    }
+  },
+  "firestore": {
+    "/typeracer_scores/{scoreId}": {
+      "schema": "Score",
+      "description": "Collection of race high scores"
+    }
+  }
+}

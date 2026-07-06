@@ -23,7 +23,7 @@ import { SENTENCES, RACERS } from './data';
 import { Sentence, RacerType, RacerOption, GameStats, GameHistoryEntry } from './types';
 import { playKeyPressSound, playErrorSound, playSuccessSound, playCountdownBeep } from './lib/audio';
 import { collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs } from 'firebase/firestore';
-import { db } from './lib/firebase';
+import { db, handleFirestoreError, OperationType } from './lib/firebase';
 
 export default function App() {
   // Game state
@@ -86,6 +86,7 @@ export default function App() {
       setLeaderboard(scores);
     } catch (error) {
       console.error("Error fetching leaderboard: ", error);
+      handleFirestoreError(error, OperationType.LIST, 'typeracer_scores');
     }
   };
 
@@ -359,6 +360,7 @@ export default function App() {
     }).catch((err) => {
       console.error("Error saving score to Firestore:", err);
       setIsSubmittingScore(false);
+      handleFirestoreError(err, OperationType.CREATE, 'typeracer_scores');
     });
   };
 
@@ -901,10 +903,10 @@ export default function App() {
 
             {/* 3. TYPING DISPLAY PANEL */}
             {gameState === 'playing' && (
-              <div id="typing-panel" className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl">
+              <div id="typing-panel" className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl animate-fadeIn">
                 
                 {/* Text render engine with visual letter feedback */}
-                <div className="text-xl md:text-2xl leading-relaxed font-mono tracking-wide h-44 overflow-y-auto bg-black/20 p-5 rounded-2xl border border-white/5 custom-scrollbar select-none">
+                <div className="text-xl md:text-2xl leading-relaxed font-mono tracking-wide min-h-[240px] h-auto bg-black/30 p-6 md:p-8 rounded-2xl border border-white/5 select-none">
                   {sentence.text.split('').map((char, index) => {
                     let colorClass = 'text-white/40'; // Untyped
                     let bgClass = '';
