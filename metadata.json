@@ -1,0 +1,6 @@
+{
+  "name": "TypeRacer Mongolian",
+  "description": "Монгол хэл дээрх хурдан бичих тоглоом. Үсэг бүрийг зөв бичиж урагшилж, хурдаа (WPM) болон алдаагаа шалгаарай.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
